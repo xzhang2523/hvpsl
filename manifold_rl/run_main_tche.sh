@@ -1,0 +1,16 @@
+
+
+for seed in 0;
+    do
+    for decompose in tche;
+        do    
+        for problem in RE21 zdt1 RE37 RE24 zdt2 vlmop1 vlmop2 lqr2 lqr3;
+            do python psl_main.py --decompose $decompose --n-iter 1000 --problem-name $problem --seed $seed
+        done
+    done
+done
+
+
+
+
+sleep 100

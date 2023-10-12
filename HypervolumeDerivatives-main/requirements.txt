@@ -1,0 +1,4 @@
+autograd==1.5
+future==0.18.2
+numpy==1.23.4
+scipy==1.9.3
