@@ -125,9 +125,6 @@ def get_theta_2(J):
 
 
 
-
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
                     prog = 'ProgramName',
@@ -142,11 +139,11 @@ if __name__ == '__main__':
     parser.add_argument('--problem-name', type=str, default='vlmop1_m4')
     parser.add_argument('--decompose', type=str, default='hv1')
     parser.add_argument('--use-plot', type=str, default='Y')
-    # parser.add_argument('--n-plot', action='store_false')
+
+
 
     args = parser.parse_args()
     problem_name = args.problem_name
-
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)

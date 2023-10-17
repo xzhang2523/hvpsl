@@ -58,13 +58,8 @@ class MyProblem(Problem):
 
 if __name__ == '__main__':
 
-    # problem_name = 'RE24'
-    # if problem_name == 'RE37':
-    #     re_problem = RE37()
-    # elif problem_name == 'RE24':
-    #     re_problem = RE24()
-    # elif problem_name == 'RE21':
-    #     re_problem = RE21()
+
+
     problem_name = 'RE37'
     
     n_obj_dict = {'RE37': 3, 'RE24': 2, 'RE21': 2, 'vlmop2': 2, 'zdt1': 2}

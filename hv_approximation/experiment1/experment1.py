@@ -1,4 +1,5 @@
 from problem import loss_function, get_pf, get_true_hv
+
 import numpy as np
 from numpy import array
 import torch
@@ -78,16 +79,14 @@ def calculate_hv_from_rho(rho_array):
     
     
     
-    
+
+
+
 if __name__ == '__main__':
     problem_name = 'zdt1'
-    problem_name = 'zdt1'
-    
+
     sub_problem_numner_array = [10, 50, 100, 150, 200,500]
     sub_problem_numner_array = [10, 50, 150, 200]
-    # sub_problem_numner_array = [10, 20]
-    # sub_problem_numner_array = [20,]
-    # sub_problem_numner_array = [200,]
     sub_problem_numner_array = [20,]
     seed_num = 1
     # sub_problem_numner_array = [1,2,3,4]
@@ -149,39 +148,13 @@ if __name__ == '__main__':
         plt.legend()
         plt.xlabel('Number of samples')
         plt.ylabel('HV')
-        
-        
-        
+
         fig_prefix = 'C:\\Users\\xzhang2523\\Desktop\\IJCAI_submit\\HV_PSL\\Figures\\hv_approximation'
         fig_prefix = os.path.join(fig_prefix, problem_name)
         os.makedirs(fig_prefix, exist_ok=True)
         fig_name = os.path.join(fig_prefix, 'traj.pdf')
         plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
         print('fig saved in :{}'.format(fig_name) )
-        
-        
-        
-        
-        
-        
+
         plt.show()
     
-    
-        
-            
-        
-    # pf_true = get_pf(problem_name)
-    # hv_true = hv_ind.do(pf_true)
-    
-    
-    # print('pf_true:{}'.format(hv_true))
-    # print('pf_hat:{}'.format(calculate_hv_from_rho(rho_array)))
-    
-    # plt.scatter(pf_hat[:,0], pf_hat[:,1], label='estimated')
-    # plt.scatter(pf_true[:,0], pf_true[:,1], label='True')
-    # plt.legend()
-    # plt.show()
-    
-    
-    
-        
