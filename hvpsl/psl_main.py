@@ -30,7 +30,7 @@ from moo_data import hv1_sgd_lr_dict, hv2_sgd_lr_dict, mtche_sgd_lr_dict, tche_s
 
 
 
-def psl_loss(J, pref, args, x=None, theta=None):
+def psl_loss(J, pref, args, x=None, theta=None, nadir_ref=None):
     m = args.n_obj
     loss_arr = [0] * len(J)
     decompose = args.decompose
@@ -40,8 +40,8 @@ def psl_loss(J, pref, args, x=None, theta=None):
         elif decompose in ['mtche', 'mtchenoclip']:
             loss_arr[idx] = torch.max((ji - args.ideal_point) / prefi )
         elif decompose in ['hv1', 'hv1noclip']:
-            arg_idx = torch.argmin((args.nadir_point - ji) / prefi)
-            rho = ((args.nadir_point - ji) / prefi)[arg_idx]
+            arg_idx = torch.argmin((nadir_ref - ji) / prefi)
+            rho = ((nadir_ref - ji) / prefi)[arg_idx]
             if m==2:
                 if rho > 0:
                     loss_arr[idx] = -rho**m
@@ -64,7 +64,35 @@ def psl_loss(J, pref, args, x=None, theta=None):
     
 
 
+def main_loop(args, nadir_ref):
+    model = PrefNet( args=args)
 
+    if args.optimizer_name=='SGD':
+        optimizer = optim.SGD(model.parameters(), lr=lr)
+    else:
+        optimizer = optim.Adam(model.parameters(), lr=lr)
+
+    for iter in tqdm(range(n_iter)):
+        theta, pref = generate_rand_pref(n_obj=args.n_obj, batch_size=args.batch_size)
+        pref = torch.clamp(pref, pref_eps, pref_eps_max)
+        x = model(pref)
+        J = objective(args, x)
+
+        loss = psl_loss(J, pref, args=args, x=x, theta=theta, nadir_ref=nadir_ref)
+
+        optimizer.zero_grad()
+        loss.backward()
+        loss_array[iter] = loss.detach().numpy()
+        if not args.decompose.endswith('noclip'):
+            if args.decompose == 'mtche':
+                max_norm = 5.0
+            else:
+                max_norm = 2.0
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm, norm_type=2.0, error_if_nonfinite=False)
+        optimizer.step()
+
+
+    return model
 
 
 if __name__ == '__main__':
@@ -128,44 +156,11 @@ if __name__ == '__main__':
 
     loss_array = [0] * n_iter
 
-    model = PrefNet( args=args)
-    if args.optimizer_name=='SGD':
-        optimizer = optim.SGD(model.parameters(), lr=lr)
-    else:
-        optimizer = optim.Adam(model.parameters(), lr=lr)
-
 
 
     ts = time.time()
 
-    for iter in tqdm(range(n_iter)):
-        theta, pref = generate_rand_pref(n_obj=args.n_obj, batch_size=args.batch_size)
-        # test_extreme = True
-        # if test_extreme:
-        #     if args.n_obj==3:
-        #         pref[0,:] = Tensor([1,0,0])
-        #         pref[1,:] = Tensor([0,1,0])
-        #         pref[2,:] = Tensor([0,0,1])
-        #     else:
-        #         pref[0,:] = Tensor([1,0])
-        #         pref[1,:] = Tensor([0,1])
-                
-        pref = torch.clamp(pref, pref_eps, pref_eps_max)
-        x = model(pref)
-        J = objective(args, x)
-        
-        loss = psl_loss(J, pref, args=args, x=x, theta=theta)
-        
-        optimizer.zero_grad()
-        loss.backward()
-        loss_array[iter] = loss.detach().numpy()
-        if not args.decompose.endswith('noclip'):
-            if args.decompose=='mtche':
-                max_norm = 5.0
-            else:
-                max_norm = 2.0
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm, norm_type=2.0, error_if_nonfinite=False)
-        optimizer.step()
+    model = main_loop(args=args, nadir_ref=args.nadir_point)
 
     args.elaps = np.round(time.time() - ts, 2)
 

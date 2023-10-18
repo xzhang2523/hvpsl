@@ -1,9 +1,7 @@
 
-
-
-
-python psl_main.py --decompose hv1 --n-iter 1000 --problem-name lqr2
-python psl_main.py --decompose tche --n-iter 2000 --problem-name dtlz2
-
+for name in zdt1 zdt2 RE21
+do
+    python psl_mian.py --problem-name $name --n-iter 1000
+done
 
 
