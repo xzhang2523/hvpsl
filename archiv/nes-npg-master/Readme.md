@@ -50,7 +50,7 @@ $ pip install -e .
 ## Usage
 To run any of the given examples please simply execute the respective file.
 The examples are set to run a benchmark test on an already trained policy.
-Alternatively, adjust the [main.py](./main.py) to run the code on any platforms
+Alternatively, adjust the [main.py](main.py) to run the code on any platforms
 with continuous action spaces. The algorithms are not implemented for discrete
 action spaces.
 Please be aware that the hardware can have a huge impact on the convergence due
