@@ -5,6 +5,23 @@ import os
 import torch
 from torch import Tensor
 
+# self-lib
+from hvpsl.psl_util import objective, uniform_sphere_pref
+from hvpsl.pf_util import load_real_pf, load_re_pf_norm
+
+from hvpsl.indicators import get_ind_sparsity, get_ind_range, get_ind_hv
+
+
+
+
+# 3rd lib
+import csv
+from numpy import array
+import numpy as np
+
+
+
+
 
 def plot_main(args, model):
 
@@ -23,7 +40,7 @@ def plot_main(args, model):
             ax.set_xlabel('$f_1(x)$', fontsize=16)
             ax.set_ylabel('$f_2(x)$', fontsize=16)
             ax.set_zlabel('$f_3(x)$', fontsize=16)
-            fig_name = os.path.join(folder_prefix, '{}_{}.pdf'.format('psl', args.decompose))
+            fig_name = os.path.join(args.folder_prefix, '{}_{}.pdf'.format('psl', args.decompose))
             plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
             print('saved in {}'.format(fig_name))
 
@@ -31,17 +48,20 @@ def plot_main(args, model):
             plt.figure()
             x = model(pref)
             pref_np = pref.numpy()
-            if problem_name in ['zdt1', 'zdt2', 'vlmop2'] or problem_name.startswith('RE'):
+            if args.problem_name in ['zdt1', 'zdt2', 'vlmop2'] or args.problem_name.startswith('RE'):
                 pref_np = pref_np * 0.4
-            if problem_name.startswith('RE'):
-                J = problem.evaluate(x).numpy()
-            else:
-                J = loss_function_zxy(x, problem=problem_name).numpy()
+
+            # if args.problem_name.startswith('RE'):
+            #     J = problem.evaluate(x).numpy()
+            # else:
+            #     J = loss_function(x, problem=args.problem_name).numpy()
+            J = objective(args, x).numpy()
+
 
             if args.problem_name.startswith('RE'):
-                pf_real = load_re_pf_norm(problem_name=problem_name)
+                pf_real = load_re_pf_norm( problem_name=args.problem_name )
             else:
-                pf_real = load_real_pf(problem_name=problem_name)
+                pf_real = load_real_pf( problem_name=args.problem_name )
 
             for prefi, ji in zip(pref_np, J):
                 if args.decompose == 'hv1':
@@ -60,7 +80,8 @@ def plot_main(args, model):
             plt.legend()
             plt.xlabel('$f_1(x)$', fontsize=16)
             plt.ylabel('$f_2(x)$', fontsize=16)
-            fig_name = os.path.join(folder_prefix, '{}_{}.pdf'.format('psl', args.decompose))
+
+            fig_name = os.path.join(args.folder_prefix, '{}_{}.pdf'.format('psl', args.decompose))
 
             if args.use_plot == 'Y':
                 plt.show()
@@ -69,22 +90,27 @@ def plot_main(args, model):
             print('fig saved in :{}'.format(fig_name))
             plt.close()
 
-        # statistics
+
+
+
         if args.n_obj == 2:
             J_theta = array([np.pi / 2 - np.arctan2(*elem) for elem in J])
             hv_range = np.round(np.max(J_theta) - np.min(J_theta), 2)
         else:
-            hv_range = np.round(get_theta_2(J), 2)
+            hv_range = np.round(get_ind_range(J), 2)
+
+        hv_indicator = get_ind_hv(args)
         hv_val = np.round(hv_indicator.do(J), 2)
         if args.n_obj == 2:
-            sparsity = compute_sparsity(J) * 1e3
+            sparsity = get_ind_sparsity(J) * 1e3
         else:
-            sparsity = compute_sparsity(J) * 1e7
+            sparsity = get_ind_sparsity(J) * 1e7
+
 
         print('PSL True hv:{:.2f}'.format(hv_val))
-        csv_file_name = os.path.join(folder_prefix, '{}.csv'.format(args.decompose))
+        csv_file_name = os.path.join(args.folder_prefix, '{}.csv'.format(args.decompose))
         with open(csv_file_name, 'w', newline='') as csvfile:
             spamwriter = csv.writer(csvfile)
             spamwriter.writerow(['HV', 'Range', 'Sparsity', 'Time'])
-            spamwriter.writerow([str(hv_val), str(hv_range), str(np.round(sparsity, 3)), elaps])
+            spamwriter.writerow([str(hv_val), str(hv_range), str(np.round(sparsity, 3)), args.elaps])
         print('csv saved in {}'.format(csv_file_name))

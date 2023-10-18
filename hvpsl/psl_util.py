@@ -1,8 +1,10 @@
 import torch
 import numpy as np
+from numpy import array
 
 from problem import loss_function
 from reproblem import RE21, RE24, RE37, RE34, RE33
+
 
 
 
@@ -51,3 +53,48 @@ def objective(args, x):
         J = loss_function(x, problem=args.problem_name )
 
     return J
+
+
+def element_wise_division(J, Aup=array([1, 2])):
+    length = J.shape[-1]
+    J_new = [0] * length
+    for i in range(length):
+        res = J[:, i] / Aup
+        J_new[i] = res
+    return torch.stack(J_new)
+
+
+def get_theta(r, t):
+    k1_1 = -1. / (1 + torch.exp(r[0] + r[1] * t))
+    k2_2 = -1. / (1 + torch.exp(r[2] + r[3] * t))
+    return torch.stack([k1_1, k2_2])
+
+
+def get_pref_from_angle(angle):
+    pref1 = torch.cos(angle).unsqueeze(0)
+    pref2 = torch.sin(angle).unsqueeze(0)
+    pref = torch.cat([pref1, pref2], dim=0)
+    return pref.T
+
+
+
+def uniform_sphere_pref(m=2, n=100, eps=1e-2):
+    if m == 2:
+        theta = np.linspace(eps, np.pi / 2 - eps, n)
+        x = np.sin(theta)
+        y = np.cos(theta)
+        return np.c_[x, y]
+    elif m == 3:
+        th1 = np.linspace(eps, np.pi / 2 - eps, n)
+        th2 = np.linspace(eps, np.pi / 2 - eps, n)
+        th1, th2 = np.meshgrid(th1, th2)
+        th_array = []
+        for i in range(n):
+            for j in range(n):
+                th_array.append(array([th1[i][j], th2[i][j]]))
+        th_array = array(th_array)
+        p1 = np.sin(th_array[:, 0]) * np.sin(th_array[:, 1])
+        p2 = np.sin(th_array[:, 0]) * np.cos(th_array[:, 1])
+        p3 = np.cos(th_array[:, 0])
+
+        return np.c_[p1, p2, p3]

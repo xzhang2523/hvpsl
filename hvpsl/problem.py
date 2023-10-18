@@ -165,28 +165,8 @@ def get_true_hv(problem_name):
     
     
     
-def uniform_sphere_pref(m=2, n=100, eps=1e-2):
-    if m == 2:
-        theta = np.linspace(eps, np.pi/2-eps, n)
-        x = np.sin(theta)
-        y = np.cos(theta)
-        return np.c_[x,y]
-    elif m == 3:
-        th1 = np.linspace(eps, np.pi/2-eps, n)
-        th2 = np.linspace(eps, np.pi/2-eps, n)
-        th1, th2 = np.meshgrid(th1, th2)
-        th_array = []
-        for i in range(n):
-            for j in range(n):
-                th_array.append(array([th1[i][j], th2[i][j]]) )
-        th_array = array(th_array)
-        p1 = np.sin(th_array[:,0]) * np.sin(th_array[:,1])
-        p2 = np.sin(th_array[:,0]) * np.cos(th_array[:,1])
-        p3 = np.cos(th_array[:,0])
-        
-        return np.c_[p1,p2,p3]
-        # print()
-        
+
+
         
     
         

@@ -21,22 +21,7 @@ import numpy as np
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-def load_re_pf(problem_name):
-    pf = np.loadtxt('D:\\code\\reproblems-master\\reproblems-master\\approximated_Pareto_fronts\\reference_points_{}.dat'.format(problem_name))
-    return pf
 
-def load_re_pf_norm(problem_name, down_sample = 10):
-    pf = load_re_pf(problem_name)
-    pf_min = np.min(pf, axis=0)
-    pf_max = np.max(pf, axis=0)
-    for i in range(len(pf)):
-        pf[i,:] = (pf[i,:] - pf_min) / (pf_max - pf_min)
-    
-    pf = pf[::10]
-    idx = np.argsort(pf[:,0])
-    pf = pf[idx]
-    
-    return pf
         
     
 

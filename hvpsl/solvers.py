@@ -8,12 +8,14 @@ import cvxpy as cp
 import cvxopt
 
 """Implementation of Pareto HyperNetworks with:
-1. Linear scalarization
-3. EPO
-
-
-EPO code from: https://github.com/dbmptr/EPOSearch
+    1. Linear scalarization
+    3. EPO
+    It is used to solve EPO. 
+    
+    EPO code from: https://github.com/dbmptr/EPOSearch
 """
+
+
 
 
 class Solver:

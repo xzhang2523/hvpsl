@@ -5,6 +5,7 @@ from numpy import array
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
 
+
 def load_real_pf(problem_name='zdt1', n_obj=2, down_sample=3):
     if problem_name == 'zdt1':
         x = np.linspace(0,1,100)
@@ -35,6 +36,30 @@ def load_real_pf(problem_name='zdt1', n_obj=2, down_sample=3):
     return pf
 
 
+def load_re_pf(problem_name):
+    pf = np.loadtxt(
+        'D:\\code\\reproblems-master\\reproblems-master\\approximated_Pareto_fronts\\reference_points_{}.dat'.format(
+            problem_name))
+    return pf
+
+
+def load_re_pf_norm(problem_name, down_sample=10):
+    pf = load_re_pf(problem_name)
+    pf_min = np.min(pf, axis=0)
+    pf_max = np.max(pf, axis=0)
+    for i in range(len(pf)):
+        pf[i, :] = (pf[i, :] - pf_min) / (pf_max - pf_min)
+
+    pf = pf[::10]
+    idx = np.argsort(pf[:, 0])
+    pf = pf[idx]
+
+    return pf
+
+
+
+
+
 
 
 
@@ -58,20 +83,22 @@ class LQR:
             Ri[i][i] = self.e
             self.Q[i] = Qi
             self.R[i] = Ri
-        
-        
+
+
     def getJ(self, K):
         P = [0] * self.n_obj
         J = [0] * self.n_obj
-        
+
         for idx in range(self.n_obj):
             P[idx] = (self.Q[idx] + K@self.R[idx]@K) @ torch.inverse(torch.eye(self.n_obj) - self.g*(torch.eye(self.n_obj) + 2*K + K@K))
             J[idx] = self.x0.T @ P[idx] @ self.x0 + (1/(1-self.g)) * torch.trace(self.Sigma @ (self.R[idx] + self.g * self.B.T @ P[idx] @ self.B))
-            J[idx] = J[idx] / 100 
-            
+            J[idx] = J[idx] / 100
+
         return torch.cat(J).squeeze()
+
     
-    
+
+
 
 
 def check_dominated(obj_batch, obj):
@@ -93,30 +120,7 @@ def get_ep_indices(obj_batch_input):
 
 
 
-def compute_sparsity(obj_batch):
-    obj_num = obj_batch.shape[-1]
-    non_dom = NonDominatedSorting().do(obj_batch, only_non_dominated_front=True)        
-    objs = obj_batch[non_dom]
-    
-    if obj_num == 2:
-        sort_array = obj_batch
-        sparsity = [np.linalg.norm(sort_array[i]-sort_array[i+1])**2  for i in range(len(sort_array)-1)]
-        sparsity = np.max(sparsity)
-    else:
-        sparsity_sum = 0    
-        for objective in range(objs.shape[-1]):
-            objs_sort = np.sort(objs[:,objective])
-            sp = 0
-            for i in range(len(objs_sort)-1):
-                sp +=  np.power(objs_sort[i] - objs_sort[i+1],2)
-            sparsity_sum += sp
-        if len(objs) > 1:
-            sparsity = sparsity_sum/(len(objs)-1)
-        else:  
-            sparsity = 0
-    
-   
-    return sparsity
+
     
 
 

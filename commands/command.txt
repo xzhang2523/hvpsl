@@ -1,6 +1,6 @@
+git related
+
 git remote -v
-
-
 
 git add.
 git commit -m "update"
@@ -10,3 +10,12 @@ git push origin master
 re-init
 git remote add origin git@****/*.git
 git push origin master
+
+
+
+conda related.
+
+
+
+
+
