@@ -15,7 +15,7 @@ def load_real_pf(problem_name='zdt1', n_obj=2, down_sample=3):
         y = 1 - x**2
         pf = np.c_[x,y]
     elif problem_name.startswith('lqr'):
-        file_path = 'D:\\code\\Paper_IJCAI\\manifold_rl\\data\\front_{}.mat'.format(problem_name)
+        file_path = 'D:\\code\\Paper_IJCAI\\hvpsl\\data\\front_{}.mat'.format(problem_name)
         mat = scipy.io.loadmat(file_path)
         front_manual = mat['front_manual'] / 100
         pf = front_manual[::down_sample]

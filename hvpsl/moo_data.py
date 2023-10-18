@@ -99,3 +99,14 @@ clip_norm_dict = {
   'mtche' : 5.0,
   'hv2' : 2.0,
 }
+
+
+
+
+
+
+
+def get_nobj(problem):
+  pass
+
+

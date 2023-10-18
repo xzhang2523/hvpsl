@@ -10,7 +10,7 @@ from numpy import array
 
 
 
-def loss_function_zxy(x, problem='zdt1'):
+def loss_function(x, problem='zdt1'):
     n_var = x.shape[-1]
     if problem.startswith('zdt'):
         f = x[:, 0]

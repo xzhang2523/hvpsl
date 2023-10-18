@@ -107,21 +107,17 @@ if __name__ == '__main__':
 
 
 
-    fig_folder = os.path.join('C:\\Users\\xzhang2523\\Desktop\\IJCAI_submit\\HV_PSL\\Figures', 'smsmoea')
-    os.makedirs(name=fig_folder, exist_ok=True)
-    fig_name = os.path.join(fig_folder, '{}.pdf'.format(problem_name))
+    # fig_folder = os.path.join('C:\\Users\\xzhang2523\\Desktop\\IJCAI_submit\\HV_PSL\\Figures', 'smsmoea')
+
+
+    folder_prefix = os.path.join(os.getcwd(), 'output', problem_name, 'seed_{}'.format(args.seed))
+    # folder_prefix =
+    os.makedirs(name=folder_prefix, exist_ok=True)
+
+
+
+    fig_name = os.path.join(folder_prefix, '{}.pdf'.format(problem_name))
     plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
     print('Figure saved to {}'.format(fig_name))
     
     plt.show()
-    
-
-
-
-    # plot = Scatter()
-    # plot.add(problem.pareto_front(), plot_type="line", color="black", alpha=0.7)
-    # plot.add(res.F, color="red")
-    
-    
-    
-    # plot.show()

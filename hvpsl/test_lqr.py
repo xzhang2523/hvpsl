@@ -186,11 +186,7 @@ if __name__ == '__main__':
         print()
             
             
-            
-            
-    
-    
-    
+
     J_array_numpy = torch.cat(J_array, dim=0).numpy()
     print()
     
@@ -199,30 +195,6 @@ if __name__ == '__main__':
     pf_true = load_real_pf()
     plt.scatter(pf_true[:,0], pf_true[:,1], label='true')
     
-    
     plt.legend()
     plt.show()
     print()
-    
-    
-    
-    # t = np.linspace(0,1,100)
-    # r = array([1,1.1,2,2])
-    # k1_1 = -1./(1+np.exp(r[0]+r[1]*t))
-    # k2_2 = -1./(1+np.exp(r[2]+r[3]*t))
-    # plt.plot(k1_1)
-    # plt.plot(k2_2)
-    # plt.show()
-    
-    
-    
-    
-    
-    
-    # plt.show()
-    
-    # print()
-        
-        
-    
-    

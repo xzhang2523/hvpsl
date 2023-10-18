@@ -13,26 +13,20 @@ import time
 warnings.simplefilter("ignore", UserWarning)
 
 # from pf_util import 
-from torch.autograd import Variable
 import torch
 from torch import Tensor
-from torch.autograd.functional import jacobian
 from torch import optim
-from torch import nn
-import torch.nn.functional as F
 
 from tqdm import tqdm
-from pf_util import load_real_pf, LQR, compute_sparsity
+from pf_util import load_real_pf, compute_sparsity
 from reproblem import RE21, RE24, load_re_pf_norm, RE37, RE34, RE33
 from pymoo.indicators.hv import Hypervolume
-from psl_model import PrefNet
-from moo_data import hv1_sgd_lr_dict, hv2_sgd_lr_dict, mtche_sgd_lr_dict, tche_sgd_lr_dict, epo_sgd_lr_dict, nadir_point_dict, ideal_point_dict, sparse_scale_dict, clip_norm_dict
-from moo_utility import mgda_direction
-
-
+from hvpsl.model.psl_model import PrefNet
+from moo_data import hv1_sgd_lr_dict, hv2_sgd_lr_dict, mtche_sgd_lr_dict, tche_sgd_lr_dict, epo_sgd_lr_dict, \
+    sparse_scale_dict
 
 # hyper parameters optimization
-from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+from hyperopt import fmin, tpe, hp, Trials
 
 
 

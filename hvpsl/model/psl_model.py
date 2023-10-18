@@ -2,12 +2,19 @@ import torch.nn.functional as F
 from torch import nn
 
 
+from hvpsl.psl_util import get_problem
+
+
+
+
+
 
 class PrefNet(nn.Module):
     def __init__(self, args, problem=None):
         super().__init__()
         self.problem_name = args.problem_name
         if self.problem_name.startswith('RE'):
+            problem = get_problem(self.problem_name)
             self.lb = problem.lbound
             self.ub = problem.ubound
             n_var = problem.n_variables
