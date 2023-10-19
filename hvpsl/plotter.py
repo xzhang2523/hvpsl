@@ -23,6 +23,9 @@ import numpy as np
 
 
 
+
+
+
 def plot_main(args, model):
 
     if args.n_obj == 2:
@@ -48,13 +51,9 @@ def plot_main(args, model):
             plt.figure()
             x = model(pref)
             pref_np = pref.numpy()
-            if args.problem_name in ['zdt1', 'zdt2', 'vlmop2'] or args.problem_name.startswith('RE'):
+            if args.n_obj == 2:
                 pref_np = pref_np * 0.4
 
-            # if args.problem_name.startswith('RE'):
-            #     J = problem.evaluate(x).numpy()
-            # else:
-            #     J = loss_function(x, problem=args.problem_name).numpy()
             J = objective(args, x).numpy()
 
 
@@ -93,11 +92,7 @@ def plot_main(args, model):
 
 
 
-        if args.n_obj == 2:
-            J_theta = array([np.pi / 2 - np.arctan2(*elem) for elem in J])
-            range_val = np.round(np.max(J_theta) - np.min(J_theta), 2)
-        else:
-            range_val = np.round(get_ind_range(J), 2)
+        range_val = get_ind_range(J, args)
 
         hv_indicator = get_ind_hv(args)
         hv_val = np.round(hv_indicator.do(J), 2)

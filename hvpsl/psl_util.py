@@ -113,3 +113,26 @@ def add_extreme_pref(pref, args=None):
     else:
         assert False, 'n_obj should be 2 or 3'
     return pref
+
+
+
+from indicators import get_ind_range, get_ind_sparsity
+def model_quality(model, args):
+    if args.n_obj == 2:
+        pref = Tensor(uniform_sphere_pref(m=args.n_obj, n=60))
+    else:
+        pref = Tensor(uniform_sphere_pref(m=args.n_obj, n=80))
+
+    with torch.no_grad():
+        x = model(pref)
+        J = objective(args, x).numpy()
+
+        range_val = np.round(get_ind_range(J, args), 2)
+
+        if args.n_obj == 2:
+            sparsity_val = get_ind_sparsity(J) * 1e3
+        else:
+            sparsity_val = get_ind_sparsity(J) * 1e7
+
+    quality = range_val + sparsity_val
+    return quality

@@ -31,16 +31,24 @@ def get_ind_sparsity(obj_batch):
     return sparsity
 
 
-def get_ind_range(J):
-    x = J[:,0]
-    y = J[:,1]
-    z = J[:,2]
-    r = np.sqrt(x**2+y**2+z**2)
-    theta = np.arctan(np.sqrt(x**2+y**2)/ np.clip(z**2, np.ones_like(x)*1e-3, a_max=None) )
-    fie = np.arctan(y / np.clip(x, np.ones_like(x)*1e-3, a_max=None) )
-    theta_range = np.max(theta) - np.min(theta)
-    fie_range = np.max(fie) - np.min(fie)
-    return min(theta_range, fie_range)
+def get_ind_range(J, args):
+
+
+    if args.n_obj == 3:
+        x = J[:,0]
+        y = J[:,1]
+        z = J[:,2]
+        r = np.sqrt(x**2+y**2+z**2)
+        theta = np.arctan(np.sqrt(x**2+y**2)/ np.clip(z**2, np.ones_like(x)*1e-3, a_max=None) )
+        fie = np.arctan(y / np.clip(x, np.ones_like(x)*1e-3, a_max=None) )
+        theta_range = np.max(theta) - np.min(theta)
+        fie_range = np.max(fie) - np.min(fie)
+        range_val = min(theta_range, fie_range)
+    else:
+        J_theta = array([np.pi / 2 - np.arctan2(*elem) for elem in J])
+        range_val = np.round(np.max(J_theta) - np.min(J_theta), 2)
+
+    return range_val
 
 
 

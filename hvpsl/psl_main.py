@@ -9,7 +9,7 @@ from torch import optim
 
 # self-lib
 from hvpsl.model.psl_model import PrefNet
-from psl_util import generate_rand_pref, objective, add_extreme_pref
+from psl_util import generate_rand_pref, objective, add_extreme_pref, model_quality
 
 # 3rd-lib
 import numpy as np
@@ -24,6 +24,11 @@ from solvers import EPOSolver
 # constants or functions
 from moo_data import hv1_sgd_lr_dict, hv2_sgd_lr_dict, mtche_sgd_lr_dict, tche_sgd_lr_dict, epo_sgd_lr_dict, \
     nadir_point_dict, ideal_point_dict
+
+
+
+
+
 
 
 
@@ -100,10 +105,13 @@ def main_loop(args, nadir_ref):
         optimizer.step()
 
 
+    quality = model_quality(model, args)
 
 
 
-    return model, loss_array, measure
+
+
+    return model, loss_array, quality
 
 
 
@@ -123,7 +131,8 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--n-var', type=int, default=5)
     parser.add_argument('--n-obj', type=int, default=2)
-    parser.add_argument('--n-iter', type=int, default=500)
+    parser.add_argument('--n-iter', type=int, default=10)
+
     parser.add_argument('--batch-size', type=int, default=256)
     parser.add_argument('--lr', type=float, default=1e-2)
     parser.add_argument('--problem-name', type=str, default='lqr2')
@@ -178,7 +187,8 @@ if __name__ == '__main__':
     pref_eps_max = 1 - pref_eps
 
     ts = time.time()
-    model, loss_array = main_loop(args=args, nadir_ref=args.nadir_point)
+    model, loss_array, quality = main_loop(args=args, nadir_ref=args.nadir_point)
+
 
     args.elaps = np.round(time.time() - ts, 2)
 
