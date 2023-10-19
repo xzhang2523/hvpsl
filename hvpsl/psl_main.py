@@ -95,6 +95,8 @@ def main_loop(args, nadir_ref):
     return model
 
 
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
                     prog = 'ProgramName',
@@ -104,11 +106,13 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--n-var', type=int, default=5)
     parser.add_argument('--n-obj', type=int, default=2)
-    parser.add_argument('--n-iter', type=int, default=10)
+    parser.add_argument('--n-iter', type=int, default=1000)
     parser.add_argument('--batch-size', type=int, default=256)
     parser.add_argument('--lr', type=float, default=1e-2)
-    parser.add_argument('--problem-name', type=str, default='zdt1')
-    parser.add_argument('--decompose', type=str, default='hv1')
+    parser.add_argument('--problem-name', type=str, default='RE21')
+    # all problems:
+    # zdt1, zdt2, vlmop1, vlmop2, RE21, RE22, RE37, LQR1, LQR2
+    parser.add_argument('--decompose', type=str, default='hv2')
     parser.add_argument('--use-plot', type=str, default='Y')
     parser.add_argument('--optimizer-name', type=str, default='SGD' )
 
@@ -153,13 +157,9 @@ if __name__ == '__main__':
         pref_eps = 0.01
     
     pref_eps_max = 1 - pref_eps
-
     loss_array = [0] * n_iter
 
-
-
     ts = time.time()
-
     model = main_loop(args=args, nadir_ref=args.nadir_point)
 
     args.elaps = np.round(time.time() - ts, 2)

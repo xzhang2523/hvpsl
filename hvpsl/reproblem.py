@@ -2,6 +2,10 @@ import torch
 from torch import Tensor
 import numpy as np
 
+from pf_util import load_re_pf
+
+
+
 #!/usr/bin/env python
 """
   A real-world multi-objective problem suite (the RE benchmark set) 

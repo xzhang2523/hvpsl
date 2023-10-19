@@ -78,8 +78,8 @@ def plot_main(args, model):
                 plt.plot(pref_np[:, 0], pref_np[:, 1], color='skyblue', label='Pref.')
             plt.axis('equal')
             plt.legend()
-            plt.xlabel('$f_1(x)$', fontsize=16)
-            plt.ylabel('$f_2(x)$', fontsize=16)
+            plt.xlabel('$f_1$', fontsize=16)
+            plt.ylabel('$f_2$', fontsize=16)
 
             fig_name = os.path.join(args.folder_prefix, '{}_{}.pdf'.format('psl', args.decompose))
 

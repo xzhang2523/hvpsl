@@ -13,7 +13,15 @@ git push origin master
 
 
 
+
+
+
+
 conda related.
+export the environment
+conda env export --name hvpsl --file env.yml
+
+
 
 
 

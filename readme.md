@@ -12,5 +12,19 @@ To begin with, please install the following packages:
     conda activate hvpsl
 ```
 
+If creating from env.yml fail, you can simply pip install the following packages. 
+
+``` 
+    conda install numpy 
+    conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+    conda install scipy
+    pip install pymoo
+    pip install tqdm
+    pip install cvxpy
+    pip install cvxopt
+    pip install matplotlib
+```
+
+
 ## Run the code
 python psl.py --problem-name zdt1
