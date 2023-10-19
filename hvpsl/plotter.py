@@ -71,7 +71,7 @@ def plot_main(args, model):
                     plt.plot([prefi[0], ji[0]], [prefi[1], ji[1]], color='tomato')
 
             plt.scatter(J[:, 0], J[:, 1], label='PSL', color='gold')
-            plt.plot(pf_real[:, 0], pf_real[:, 1], label='True', color='tab:blue')
+            plt.plot(pf_real[:, 0], pf_real[:, 1], label='True', color='k')
             if args.decompose == 'hv1':
                 plt.plot(nadir_np[0] - pref_np[:, 0], nadir_np[1] - pref_np[:, 1], color='skyblue', label='Pref.')
             else:
@@ -95,22 +95,22 @@ def plot_main(args, model):
 
         if args.n_obj == 2:
             J_theta = array([np.pi / 2 - np.arctan2(*elem) for elem in J])
-            hv_range = np.round(np.max(J_theta) - np.min(J_theta), 2)
+            range_val = np.round(np.max(J_theta) - np.min(J_theta), 2)
         else:
-            hv_range = np.round(get_ind_range(J), 2)
+            range_val = np.round(get_ind_range(J), 2)
 
         hv_indicator = get_ind_hv(args)
         hv_val = np.round(hv_indicator.do(J), 2)
         if args.n_obj == 2:
-            sparsity = get_ind_sparsity(J) * 1e3
+            sparsity_val = get_ind_sparsity(J) * 1e3
         else:
-            sparsity = get_ind_sparsity(J) * 1e7
+            sparsity_val = get_ind_sparsity(J) * 1e7
 
 
         print('PSL True hv:{:.2f}'.format(hv_val))
         csv_file_name = os.path.join(args.folder_prefix, '{}.csv'.format(args.decompose))
         with open(csv_file_name, 'w', newline='') as csvfile:
             spamwriter = csv.writer(csvfile)
-            spamwriter.writerow(['HV', 'Range', 'Sparsity', 'Time'])
-            spamwriter.writerow([str(hv_val), str(hv_range), str(np.round(sparsity, 3)), args.elaps])
+            spamwriter.writerow(['HV', 'Range', 'sparsity_val', 'Time'])
+            spamwriter.writerow([str(hv_val), str(range_val), str(np.round(sparsity_val, 3)), args.elaps])
         print('csv saved in {}'.format(csv_file_name))

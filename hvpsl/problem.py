@@ -1,11 +1,43 @@
 import torch
 from torch import Tensor
 import numpy as np
-from pf_util import LQR
+# from pf_util import LQR
 from numpy import array
 
 
+class LQR:
+    def __init__(self, n_obj=2):
+        self.e = 0.1
+        self.g = 0.9
+        self.A = torch.eye(n_obj)
+        self.B = torch.eye(n_obj)
+        self.E = torch.eye(n_obj)
+        self.S = torch.zeros(n_obj)
+        self.Sigma = torch.eye(n_obj)
+        self.x0 = 10 * torch.ones((n_obj, 1))
+        self.n_obj = n_obj
+        self.Q = [0] * n_obj
+        self.R = [0] * n_obj
+        for i in range(n_obj):
+            Qi = torch.eye(n_obj) * self.e
+            Ri = torch.eye(n_obj) * (1 - self.e)
+            Qi[i][i] = 1 - self.e
+            Ri[i][i] = self.e
+            self.Q[i] = Qi
+            self.R[i] = Ri
 
+    def getJ(self, K):
+        P = [0] * self.n_obj
+        J = [0] * self.n_obj
+
+        for idx in range(self.n_obj):
+            P[idx] = (self.Q[idx] + K @ self.R[idx] @ K) @ torch.inverse(
+                torch.eye(self.n_obj) - self.g * (torch.eye(self.n_obj) + 2 * K + K @ K))
+            J[idx] = self.x0.T @ P[idx] @ self.x0 + (1 / (1 - self.g)) * torch.trace(
+                self.Sigma @ (self.R[idx] + self.g * self.B.T @ P[idx] @ self.B))
+            J[idx] = J[idx] / 100
+
+        return torch.cat(J).squeeze()
 
 
 

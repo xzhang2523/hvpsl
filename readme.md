@@ -27,4 +27,8 @@ If creating from env.yml fail, you can simply pip install the following packages
 
 
 ## Run the code
-python psl.py --problem-name zdt1
+python psl.py --problem-name zdt1 
+
+## To run all methods
+run the run_main.sh file. 
+

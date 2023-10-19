@@ -4,6 +4,7 @@ from numpy import array
 
 from problem import loss_function
 from reproblem import RE21, RE24, RE37, RE34, RE33
+from torch import Tensor
 
 
 
@@ -98,3 +99,17 @@ def uniform_sphere_pref(m=2, n=100, eps=1e-2):
         p3 = np.cos(th_array[:, 0])
 
         return np.c_[p1, p2, p3]
+
+
+
+def add_extreme_pref(pref, args=None):
+    if args.n_obj == 2:
+        pref[0,:] = Tensor([1,0])
+        pref[1,:] = Tensor([0,1])
+    elif args.n_obj == 3:
+        pref[0, :] = Tensor([1, 0, 0])
+        pref[1, :] = Tensor([0, 1, 0])
+        pref[2, :] = Tensor([0, 0, 1])
+    else:
+        assert False, 'n_obj should be 2 or 3'
+    return pref
