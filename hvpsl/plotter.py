@@ -51,11 +51,11 @@ def plot_main(args, model):
             plt.figure()
             x = model(pref)
             pref_np = pref.numpy()
-            if args.n_obj == 2:
+            if args.n_obj == 2 and not args.problem_name.startswith('lqr'):
                 pref_np = pref_np * 0.4
 
-            J = objective(args, x).numpy()
 
+            J = objective(args, x).numpy()
 
             if args.problem_name.startswith('RE'):
                 pf_real = load_re_pf_norm( problem_name=args.problem_name )

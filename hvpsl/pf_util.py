@@ -4,6 +4,7 @@ import numpy as np
 from numpy import array
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
+import os
 
 
 def load_real_pf(problem_name='zdt1', n_obj=2, down_sample=3):
@@ -16,10 +17,14 @@ def load_real_pf(problem_name='zdt1', n_obj=2, down_sample=3):
         y = 1 - x**2
         pf = np.c_[x,y]
     elif problem_name.startswith('lqr'):
-        file_path = 'D:\\code\\Paper_IJCAI\\hvpsl\\data\\front_{}.mat'.format(problem_name)
+        folder_prefix = os.path.dirname(os.path.realpath(__file__))
+
+        file_path = os.path.join(folder_prefix, 'data', 'front_{}.mat'.format(problem_name))
+
         mat = scipy.io.loadmat(file_path)
         front_manual = mat['front_manual'] / 100
         pf = front_manual[::down_sample]
+
     elif problem_name == 'vlmop1':
         t = np.linspace(0, 2, 100)
         x = t**2/4
@@ -36,10 +41,12 @@ def load_real_pf(problem_name='zdt1', n_obj=2, down_sample=3):
     return pf
 
 
+
 def load_re_pf(problem_name):
-    pf = np.loadtxt(
-        'D:\\code\\reproblems-master\\reproblems-master\\approximated_Pareto_fronts\\reference_points_{}.dat'.format(
-            problem_name))
+    folder_prefix = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+    dat_name = os.path.join(folder_prefix, 'reproblems-master', 'approximated_Pareto_fronts', 'reference_points_{}.dat'.format(problem_name))
+    pf = np.loadtxt(dat_name)
     return pf
 
 

@@ -15,6 +15,9 @@ To begin with, please install the following packages:
 If creating from env.yml fail, you can simply pip install the following packages. 
 
 ``` 
+    conda create --name hvpsl
+    conda activate hvpsl
+
     conda install numpy 
     conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
     conda install scipy
@@ -27,7 +30,9 @@ If creating from env.yml fail, you can simply pip install the following packages
 
 
 ## Run the code
-python psl.py --problem-name zdt1 
+Please use the ''decompose'' argument to specify the decomposition method. 
+psl-hv1 : hv1. psl-hv2 : hv2. 
+python psl.py --problem-name zdt1 --decompose hv
 
 ## To run all methods
 run the run_main.sh file. 

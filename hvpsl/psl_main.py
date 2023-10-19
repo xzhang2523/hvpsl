@@ -39,7 +39,7 @@ def psl_loss(J, pref, args, x=None, nadir_ref=None):
     for idx, (ji, prefi) in enumerate(zip(J, pref)):
         if decompose == 'tche':
             # tche_eps = 0.25. 0.25 has the best performance.
-            tche_eps = 0.0
+            tche_eps = 0.1
             loss_arr[idx] = torch.max((ji - args.ideal_point+tche_eps) * prefi )
 
 
@@ -138,19 +138,20 @@ if __name__ == '__main__':
     parser.add_argument('--problem-name', type=str, default='lqr2')
     # all problems:
     # zdt1, zdt2, vlmop1, vlmop2, RE21, RE22, RE37, LQR1, LQR2
-    parser.add_argument('--decompose', type=str, default='tche')
+    parser.add_argument('--decompose', type=str, default='hv1')
+
     parser.add_argument('--use-plot', type=str, default='Y')
     parser.add_argument('--optimizer-name', type=str, default='SGD' )
     parser.add_argument('--use-extreme-pref', type=str, default='Y')
 
-
     args = parser.parse_args()
     problem_name = args.problem_name
-    folder_prefix = os.path.join(os.getcwd(), 'output', problem_name, 'seed_{}'.format(args.seed))
+
+    script_location = os.path.dirname(os.path.realpath(__file__))
+    folder_prefix = os.path.join(script_location, 'output', problem_name, 'seed_{}'.format(args.seed))
+
     os.makedirs(folder_prefix, exist_ok=True)
     args.folder_prefix = folder_prefix
-
-
 
     if args.problem_name == 'lqr2':
         args.n_var = 2
