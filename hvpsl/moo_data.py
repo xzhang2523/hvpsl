@@ -75,7 +75,7 @@ ideal_point_dict = {
 }
 
 
-nadir_eps = 0.3
+nadir_eps = 0
 nadir_point_dict = {
   'RE21': Tensor([1.0, 1.0]) + nadir_eps,
   'RE24': Tensor([1.0, 1.0]) + nadir_eps,

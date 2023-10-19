@@ -1,0 +1,20 @@
+search_space:
+  nadir_eps:
+    _type: loguniform
+    _value: [ 0.1, 1.0 ]
+
+
+
+trial_command: python psl_main.py
+trial_code_directory: .
+
+trial_concurrency: 2
+max_trial_number: 100
+
+tuner:
+  name: TPE
+  class_args:
+    optimize_mode: maximize
+
+training_service:
+  platform: local

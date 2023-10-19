@@ -1,6 +1,10 @@
 import os
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
+import nni
 
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # pymoo
 
 # torch
@@ -17,6 +21,7 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 import argparse
 import warnings
+
 warnings.simplefilter("ignore", UserWarning)
 import time
 
@@ -24,12 +29,6 @@ from solvers import EPOSolver
 # constants or functions
 from moo_data import hv1_sgd_lr_dict, hv2_sgd_lr_dict, mtche_sgd_lr_dict, tche_sgd_lr_dict, epo_sgd_lr_dict, \
     nadir_point_dict, ideal_point_dict
-
-
-
-
-
-
 
 
 def psl_loss(J, pref, args, x=None, nadir_ref=None):
@@ -40,42 +39,41 @@ def psl_loss(J, pref, args, x=None, nadir_ref=None):
         if decompose == 'tche':
             # tche_eps = 0.25. 0.25 has the best performance.
             tche_eps = 0.1
-            loss_arr[idx] = torch.max((ji - args.ideal_point+tche_eps) * prefi )
+            loss_arr[idx] = torch.max((ji - args.ideal_point + tche_eps) * prefi)
 
 
         elif decompose in ['mtche', 'mtchenoclip']:
-            loss_arr[idx] = torch.max((ji - args.ideal_point) / prefi )
+            loss_arr[idx] = torch.max((ji - args.ideal_point) / prefi)
         elif decompose in ['hv1', 'hv1noclip']:
             arg_idx = torch.argmin((nadir_ref - ji) / prefi)
             rho = ((nadir_ref - ji) / prefi)[arg_idx]
-            if m==2:
+            if m == 2:
                 if rho > 0:
-                    loss_arr[idx] = -rho**m
+                    loss_arr[idx] = -rho ** m
                 else:
                     loss_arr[idx] = -rho
             else:
-                loss_arr[idx] = -rho**m
+                loss_arr[idx] = -rho ** m
         elif decompose in ['hv2', 'hv2noclip']:
-            if m ==2:
-                loss_arr[idx] = torch.max((ji - args.ideal_point)**2 / (prefi**2))
-            elif m==3:
-                loss_arr[idx] = torch.max((ji - args.ideal_point)**3 / (prefi**3)) 
-                
+            if m == 2:
+                loss_arr[idx] = torch.max((ji - args.ideal_point) ** 2 / (prefi ** 2))
+            elif m == 3:
+                loss_arr[idx] = torch.max((ji - args.ideal_point) ** 3 / (prefi ** 3))
+
         elif decompose == 'ls':
             loss_arr[idx] = (ji - args.ideal_point) @ prefi
         elif decompose == 'epo':
-            solver = EPOSolver(n_tasks=args.n_obj, n_params = args.n_var)
-            loss_arr[idx] = solver.get_weighted_loss((ji - args.ideal_point), ray=1/prefi, parameters=x)
+            solver = EPOSolver(n_tasks=args.n_obj, n_params=args.n_var)
+            loss_arr[idx] = solver.get_weighted_loss((ji - args.ideal_point), ray=1 / prefi, parameters=x)
     return torch.mean(torch.stack(loss_arr))
-    
 
 
 def main_loop(args, nadir_ref):
     loss_array = [0] * n_iter
 
-    model = PrefNet( args=args)
+    model = PrefNet(args=args)
 
-    if args.optimizer_name=='SGD':
+    if args.optimizer_name == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=lr)
     else:
         optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -86,7 +84,6 @@ def main_loop(args, nadir_ref):
         if args.use_extreme_pref == 'Y':
             pref = add_extreme_pref(pref, args=args)
         pref = torch.clamp(pref, pref_eps, pref_eps_max)
-
 
         x = model(pref)
         J = objective(args, x)
@@ -103,45 +100,34 @@ def main_loop(args, nadir_ref):
                 max_norm = 5.0
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm, norm_type=2.0, error_if_nonfinite=False)
         optimizer.step()
-
+        nni.report_intermediate_result(model_quality(model, args))
 
     quality = model_quality(model, args)
-
-
-
-
-
+    nni.report_final_result(quality)
     return model, loss_array, quality
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
     # The following codes handle the arguments/parameters
     parser = argparse.ArgumentParser(
-                    prog = 'ProgramName',
-                    description = 'What the program does',
-                    epilog = 'Text at the bottom of help')
-    
+        prog='ProgramName',
+        description='What the program does',
+        epilog='Text at the bottom of help')
+
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--n-var', type=int, default=5)
     parser.add_argument('--n-obj', type=int, default=2)
-    parser.add_argument('--n-iter', type=int, default=10)
+    parser.add_argument('--n-iter', type=int, default=500)
 
     parser.add_argument('--batch-size', type=int, default=256)
     parser.add_argument('--lr', type=float, default=1e-2)
-    parser.add_argument('--problem-name', type=str, default='lqr2')
+    parser.add_argument('--problem-name', type=str, default='zdt1')
     # all problems:
     # zdt1, zdt2, vlmop1, vlmop2, RE21, RE22, RE37, LQR1, LQR2
     parser.add_argument('--decompose', type=str, default='hv1')
 
     parser.add_argument('--use-plot', type=str, default='Y')
-    parser.add_argument('--optimizer-name', type=str, default='SGD' )
+    parser.add_argument('--optimizer-name', type=str, default='SGD')
     parser.add_argument('--use-extreme-pref', type=str, default='Y')
 
     args = parser.parse_args()
@@ -158,10 +144,8 @@ if __name__ == '__main__':
     elif args.problem_name == 'lqr3':
         args.n_var = 3
 
-
     if args.problem_name in ['dtlz2', 'lqr3'] or args.problem_name.startswith('RE3'):
         args.n_obj = 3
-
 
     if args.decompose == 'hv1':
         lr = hv1_sgd_lr_dict[problem_name]
@@ -177,32 +161,31 @@ if __name__ == '__main__':
     # We now consider 4-obj problems, Date 2023-8-3. 4-obj is done during rebuttal.
     n_iter = args.n_iter
     args.ideal_point = ideal_point_dict[problem_name]
-    args.nadir_point = nadir_point_dict[problem_name]
-
+    # args.nadir_point = nadir_point_dict[problem_name]
+    args.nadir_point = nadir_point_dict[problem_name] + nni.get_next_parameter()['nadir_eps']
 
     pref_eps = 0.01
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
-    
+
     pref_eps_max = 1 - pref_eps
 
     ts = time.time()
     model, loss_array, quality = main_loop(args=args, nadir_ref=args.nadir_point)
 
+    # args.elaps = np.round(time.time() - ts, 2)
 
-    args.elaps = np.round(time.time() - ts, 2)
-
-    plt.figure()
-    plt.plot(loss_array)
-    plt.xlabel('Iteration')
-    plt.ylabel('PSL loss')
-    
-
-    fig_name = os.path.join(args.folder_prefix, 'process_{}_{}.pdf'.format('psl', args.decompose))
-    plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
-    print('saved in {}'.format(fig_name))
-    plt.close()
-
-    from hvpsl.plotter import plot_main
-    plot_main(args, model)
+    # plt.figure()
+    # plt.plot(loss_array)
+    # plt.xlabel('Iteration')
+    # plt.ylabel('PSL loss')
+    #
+    # fig_name = os.path.join(args.folder_prefix, 'process_{}_{}.pdf'.format('psl', args.decompose))
+    # plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
+    # print('saved in {}'.format(fig_name))
+    # plt.close()
+    #
+    # from hvpsl.plotter import plot_main
+    #
+    # plot_main(args, model)
