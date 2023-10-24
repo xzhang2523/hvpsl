@@ -16,6 +16,9 @@ from pymoo.indicators.hv import Hypervolume
 from problem import loss_function
 
 
+import argparse
+
+
 reproblem_dict = {'RE37': RE37(), 'RE24': RE24(), 'RE21': RE21()}
 
 
@@ -44,9 +47,6 @@ class MyProblem(Problem):
                          xu=ub)
 
     def _evaluate(self, x, out, *args, **kwargs):
-        
-        # f1 = 100 * (x[:, 0]**2 + x[:, 1]**2)
-        # f2 = (x[:, 0]-1)**2 + x[:, 1]**2
         if self.problem_name.startswith('RE'):
             re_res = self.reproblem.evaluate( torch.Tensor(x) )
         else:
@@ -55,8 +55,16 @@ class MyProblem(Problem):
         out["F"] = re_res.numpy()
         
 
-
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(
+        prog='ProgramName',
+        description='What the program does',
+        epilog='Text at the bottom of help')
+
+    parser.add_argument('--seed', type=int, default=0)
+    args = parser.parse_args()
+
 
 
 
@@ -97,17 +105,15 @@ if __name__ == '__main__':
         ax = plt.axes(projection='3d')
         ax.view_init(elev=46, azim=33)
         ax.scatter3D(res.F[:,0], res.F[:,1], res.F[:,2], color = "green", label='SMS-EMOA')
-        ax.set_xlabel('$f_1(x)$', fontsize=16)
-        ax.set_ylabel('$f_2(x)$', fontsize=16)
-        ax.set_zlabel('$f_3(x)$', fontsize=16)
+        ax.set_xlabel('$f_1$', fontsize=16)
+        ax.set_ylabel('$f_2$', fontsize=16)
+        ax.set_zlabel('$f_3$', fontsize=16)
     else:
         plt.scatter(res.F[:,0], res.F[:,1], color = "gold")
-        plt.xlabel('$f_1(x)$', fontsize=16)
-        plt.ylabel('$f_2(x)$', fontsize=16)
+        plt.xlabel('$f_1$', fontsize=16)
+        plt.ylabel('$f_2$', fontsize=16)
 
 
-
-    # fig_folder = os.path.join('C:\\Users\\xzhang2523\\Desktop\\IJCAI_submit\\HV_PSL\\Figures', 'smsmoea')
 
 
     folder_prefix = os.path.join(os.getcwd(), 'output', problem_name, 'seed_{}'.format(args.seed))
@@ -117,7 +123,7 @@ if __name__ == '__main__':
 
 
     fig_name = os.path.join(folder_prefix, '{}.pdf'.format(problem_name))
-    plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
+    plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1)
     print('Figure saved to {}'.format(fig_name))
     
     plt.show()

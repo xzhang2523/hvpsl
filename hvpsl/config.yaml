@@ -1,15 +1,15 @@
 search_space:
   nadir_eps:
-    _type: loguniform
-    _value: [ 0.1, 1.0 ]
+    _type: uniform
+    _value: [ 0.01, 0.8 ]
 
 
 
-trial_command: python psl_main.py
+trial_command: python psl_main.py --use-nni Y --problem-name vlmop1
 trial_code_directory: .
 
-trial_concurrency: 2
-max_trial_number: 100
+trial_concurrency: 4
+max_trial_number: 20
 
 tuner:
   name: TPE

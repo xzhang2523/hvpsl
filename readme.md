@@ -26,14 +26,23 @@ If creating from env.yml fail, you can simply pip install the following packages
     pip install cvxpy
     pip install cvxopt
     pip install matplotlib
+    pip install nni
+    pip install csv2latex
 ```
 
 
 ## Run the code
 Please use the ''decompose'' argument to specify the decomposition method. 
 psl-hv1 : hv1. psl-hv2 : hv2. 
+```
 python psl.py --problem-name zdt1 --decompose hv
+```
 
 ## To run all methods
 run the run_main.sh file. 
+
+## To use NNI to select the reference point
+```
+nnictl create --config config.yml --port 8080
+```
 

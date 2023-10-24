@@ -15,7 +15,10 @@ def get_ind_sparsity(obj_batch):
     if obj_num == 2:
         sort_array = obj_batch
         sparsity = [np.linalg.norm(sort_array[i] - sort_array[i + 1]) ** 2 for i in range(len(sort_array) - 1)]
-        sparsity = np.max(sparsity)
+        # sparsity = np.max(sparsity)
+        sparsity = np.mean(sparsity)
+
+
     else:
         sparsity_sum = 0
         for objective in range(objs.shape[-1]):

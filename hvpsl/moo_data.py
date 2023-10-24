@@ -36,22 +36,10 @@ epo_sgd_lr_dict = {
   'lqr3' : 0.1,
 }
 
-hv2_sgd_lr_dict = {
-  'RE21': 2e-3,
-  'RE24': 2e-3,
-  'RE37': 0.5,
-  'zdt1' : 1e-2,
-  'zdt2' : 1e-2,
-  'vlmop1' : 1e-2,
-  'vlmop2' : 1e-2,
-  'lqr2' : 1e-2,
-  'lqr3' : 1e-2,
-}
-
 hv1_sgd_lr_dict = {
   'RE21': 0.1,
   'RE24': 0.1,
-  'RE37': 0.5,
+  'RE37': 0.1,
   'zdt1' : 0.01,
   'zdt2' : 0.01,
   'vlmop1' : 0.05,
@@ -61,10 +49,24 @@ hv1_sgd_lr_dict = {
   'vlmop1_m4' : 0.01
 }
 
+hv2_sgd_lr_dict = {
+  'RE21': 2e-3,
+  'RE24': 2e-3,
+  'RE37': 0.1,
+  'zdt1' : 1e-3,
+  'zdt2' : 1e-2,
+  'vlmop1' : 1e-2,
+  'vlmop2' : 1e-2,
+  'lqr2' : 1e-2,
+  'lqr3' : 1e-2,
+}
+
+
+
 ideal_point_dict = {
   'RE21': Tensor([0.0, 0.0]),
   'RE24': Tensor([0.0, 0.0]),
-  'RE37': Tensor([0.0,0.0,0.0]),
+  'RE37': Tensor([0.0, 0.0, 0.0]),
   'zdt1' : Tensor([0.0, 0.0]),
   'zdt2' : Tensor([0.0, 0.0]),
   'dtlz2' : Tensor([0.0, 0.0, 0.0]),

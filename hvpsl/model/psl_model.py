@@ -18,11 +18,11 @@ class PrefNet(nn.Module):
             self.lb = problem.lbound
             self.ub = problem.ubound
             n_var = problem.n_variables
-            hidden_size = 256
+            hidden_size = 512
             
         else:
             n_var = args.n_var
-            hidden_size = 64
+            hidden_size = 128
             
         self.fc1 = nn.Linear(args.n_obj, hidden_size)  # 6*6 from image dimension
         self.fc2 = nn.Linear(hidden_size, hidden_size)

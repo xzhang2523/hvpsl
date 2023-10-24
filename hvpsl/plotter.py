@@ -40,11 +40,11 @@ def plot_main(args, model):
             ax = plt.axes(projection='3d')
             ax.view_init(elev=46, azim=33)
             ax.scatter3D(J[:, 0], J[:, 1], J[:, 2], color="green", label='PSL')
-            ax.set_xlabel('$f_1(x)$', fontsize=16)
-            ax.set_ylabel('$f_2(x)$', fontsize=16)
-            ax.set_zlabel('$f_3(x)$', fontsize=16)
+            ax.set_xlabel('$f_1$', fontsize=16)
+            ax.set_ylabel('$f_2$', fontsize=16)
+            ax.set_zlabel('$f_3$', fontsize=16)
             fig_name = os.path.join(args.folder_prefix, '{}_{}.pdf'.format('psl', args.decompose))
-            plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
+            plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1)
             print('saved in {}'.format(fig_name))
 
         elif args.n_obj == 2:
@@ -90,10 +90,7 @@ def plot_main(args, model):
             plt.close()
 
 
-
-
         range_val = get_ind_range(J, args)
-
         hv_indicator = get_ind_hv(args)
         hv_val = np.round(hv_indicator.do(J), 2)
         if args.n_obj == 2:

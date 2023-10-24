@@ -134,5 +134,9 @@ def model_quality(model, args):
         else:
             sparsity_val = get_ind_sparsity(J) * 1e7
 
-    quality = range_val + sparsity_val
+    # quality = range_val + sparsity_val
+    # quality = range_val
+
+    # quality = range_val - 0.02 * sparsity_val
+    quality = sparsity_val
     return quality

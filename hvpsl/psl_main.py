@@ -4,7 +4,7 @@ import nni
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.dirname( os.path.dirname(os.path.abspath(__file__)) ))
 # pymoo
 
 # torch
@@ -31,6 +31,10 @@ from moo_data import hv1_sgd_lr_dict, hv2_sgd_lr_dict, mtche_sgd_lr_dict, tche_s
     nadir_point_dict, ideal_point_dict
 
 
+
+
+
+
 def psl_loss(J, pref, args, x=None, nadir_ref=None):
     m = args.n_obj
     loss_arr = [0] * len(J)
@@ -38,7 +42,7 @@ def psl_loss(J, pref, args, x=None, nadir_ref=None):
     for idx, (ji, prefi) in enumerate(zip(J, pref)):
         if decompose == 'tche':
             # tche_eps = 0.25. 0.25 has the best performance.
-            tche_eps = 0.1
+            tche_eps = 0.0
             loss_arr[idx] = torch.max((ji - args.ideal_point + tche_eps) * prefi)
 
 
@@ -94,17 +98,22 @@ def main_loop(args, nadir_ref):
         loss.backward()
         loss_array[iter] = loss.detach().numpy()
         if not args.decompose.endswith('noclip'):
-            if args.decompose == 'mtche':
-                max_norm = 5.0
-            else:
-                max_norm = 5.0
+            max_norm = 4.0
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm, norm_type=2.0, error_if_nonfinite=False)
+
         optimizer.step()
-        nni.report_intermediate_result(model_quality(model, args))
+        if args.use_nni == 'Y':
+            nni.report_intermediate_result(model_quality(model, args))
 
     quality = model_quality(model, args)
-    nni.report_final_result(quality)
+    if args.use_nni == 'Y':
+        nni.report_final_result(quality)
     return model, loss_array, quality
+
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -117,7 +126,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=0)
     parser.add_argument('--n-var', type=int, default=5)
     parser.add_argument('--n-obj', type=int, default=2)
-    parser.add_argument('--n-iter', type=int, default=500)
+    parser.add_argument('--n-iter', type=int, default=1000)
 
     parser.add_argument('--batch-size', type=int, default=256)
     parser.add_argument('--lr', type=float, default=1e-2)
@@ -128,9 +137,16 @@ if __name__ == '__main__':
 
     parser.add_argument('--use-plot', type=str, default='Y')
     parser.add_argument('--optimizer-name', type=str, default='SGD')
-    parser.add_argument('--use-extreme-pref', type=str, default='Y')
+    parser.add_argument('--use-extreme-pref', type=str, default='N')
+    parser.add_argument('--use-nni', type=str, default='N')
+    parser.add_argument('--nadir-eps', type=float, default=0.4 )   #
+
+
 
     args = parser.parse_args()
+    if args.decompose == 'epo':
+        args.n_iter = 100       # epo is slow
+
     problem_name = args.problem_name
 
     script_location = os.path.dirname(os.path.realpath(__file__))
@@ -162,30 +178,36 @@ if __name__ == '__main__':
     n_iter = args.n_iter
     args.ideal_point = ideal_point_dict[problem_name]
     # args.nadir_point = nadir_point_dict[problem_name]
-    args.nadir_point = nadir_point_dict[problem_name] + nni.get_next_parameter()['nadir_eps']
+
+
+    if args.use_nni == 'Y':
+        args.nadir_point = nadir_point_dict[problem_name] + nni.get_next_parameter()['nadir_eps']
+    else:
+        args.nadir_point = nadir_point_dict[problem_name] + args.nadir_eps
+
 
     pref_eps = 0.01
-
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
-
     pref_eps_max = 1 - pref_eps
-
     ts = time.time()
     model, loss_array, quality = main_loop(args=args, nadir_ref=args.nadir_point)
 
-    # args.elaps = np.round(time.time() - ts, 2)
 
-    # plt.figure()
-    # plt.plot(loss_array)
-    # plt.xlabel('Iteration')
-    # plt.ylabel('PSL loss')
+
+
     #
-    # fig_name = os.path.join(args.folder_prefix, 'process_{}_{}.pdf'.format('psl', args.decompose))
-    # plt.savefig(fig_name, bbox_inches='tight', pad_inches=0)
-    # print('saved in {}'.format(fig_name))
-    # plt.close()
-    #
-    # from hvpsl.plotter import plot_main
-    #
-    # plot_main(args, model)
+    if not args.use_nni == 'Y':
+        args.elaps = np.round(time.time() - ts, 2)
+
+        plt.figure()
+        plt.plot(loss_array)
+        plt.xlabel('Iteration')
+        plt.ylabel('PSL loss')
+
+        fig_name = os.path.join(args.folder_prefix, 'process_{}_{}.pdf'.format('psl', args.decompose))
+        plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1 )
+        print('saved in {}'.format(fig_name))
+        plt.close()
+        from hvpsl.plotter import plot_main
+        plot_main(args, model)

@@ -14,11 +14,9 @@ if __name__ == '__main__':
     all_data_std = [0] * len(all_problem_name)
     
     for idx, problem_name in enumerate(all_problem_name):
-        if len(all_problem_name) == 2:
-            folder_prefix = 'C:\\Users\\xzhang2523\\Desktop\\IJCAI_submit\\HV_PSL\\Figures\\exp3\\{}'.format(problem_name)
-        else:
-            folder_prefix = 'C:\\Users\\xzhang2523\\Desktop\\IJCAI_submit\\HV_PSL\\Figures\\exp2\\SGD\\{}'.format(problem_name)
-        
+        folder_prefix = os.path.join(os.path.dirname( os.path.dirname(os.path.abspath(__file__)) ), 'output', problem_name)
+        print()
+
         csv_name = os.path.join(folder_prefix, 'all.csv')
         res = pd.read_csv(csv_name)
         num_col = res.values.shape[-1]
@@ -34,24 +32,14 @@ if __name__ == '__main__':
         data_std = rr_std[:,1:]
         all_data_std[idx] = data_std
         
-        
-        
-        
-        
-
-
-    # avg_data = np.round(np.mean(np.array(all_data).astype(float),0), 2)
-    # avg_data_std = np.round(np.mean(np.array(avg_data_std).astype(float),0), 2)
-    # avg_data = np.concatenate([[['PSL-EPO'],['PSL-LS'],['PSL-Tche'],['PSL-HV1'],['PSL-HV2']], avg_data], 1)
-
 
 
     all_data = [0] * len(all_problem_name)
     all_data_std = [0] * len(all_problem_name)
     
     for idx, problem_name in enumerate(all_problem_name):
-        folder_prefix = 'C:\\Users\\xzhang2523\\Desktop\\IJCAI_submit\\HV_PSL\\Figures\\exp2\\SGD\\{}'.format(problem_name)
-        
+        folder_prefix = os.path.join(os.path.dirname( os.path.dirname(os.path.abspath(__file__)) ), 'output', problem_name)
+
         csv_name = os.path.join(folder_prefix, 'all.csv')
         res = pd.read_csv(csv_name)
         num_col = res.values.shape[-1]
@@ -81,12 +69,7 @@ if __name__ == '__main__':
         
     all_data = np.concatenate(all_data, 0)
     all_data_std = np.concatenate(all_data_std, 0)
-    # n_row, n_col = all_data.shape
-    # for i in range(n_row):
-        # for j in range(1,n_col):
-            # all_data[i,j] = r'${' + str(all_data[i,j]) + '}' + '_{' + str(np.round(all_data_std[i,j],1)) + '}$'
-            
-        
+
 
     all_data_prime = np.zeros((15,13), dtype=object)
     all_data_prime[:,0] = all_data[:15,0]
@@ -103,10 +86,11 @@ if __name__ == '__main__':
             idx = (3*m+n)*5
             all_data_prime[i,j+1] = all_data[idx+idx_m, idx_n+1]
             all_data_prime_std[i,j+1] = all_data_std[idx+idx_m, idx_n+1]
-            
-        
-    
-    csv_file_name = os.path.join('D:\\code\\Paper_IJCAI\\manifold_rl\\script', 'synetic.csv')
+
+
+
+    csv_file_name = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'script', 'synetic.csv')
+
     with open(csv_file_name, 'w', newline='', encoding='UTF-8') as csvfile:
         spamwriter = csv.writer(csvfile)
         one_row = ['Method', 'HV', 'Range', 'Sparsity', 'Time'] + ['HV', 'Range', 'Sparsity', 'Time'] + ['HV', 'Range', 'Sparsity', 'Time']
@@ -115,8 +99,9 @@ if __name__ == '__main__':
         for elem in all_data_prime:
             spamwriter.writerow(elem)
     print('saved in:{}'.format(csv_file_name))
-    
-    csv_file_name = os.path.join('D:\\code\\Paper_IJCAI\\manifold_rl\\script', 'synetic_std.csv')
+
+
+    csv_file_name = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'script', 'synetic_std.csv')
     with open(csv_file_name, 'w', newline='', encoding='UTF-8') as csvfile:
         spamwriter = csv.writer(csvfile)
         one_row = ['Method', 'HV', 'Range', 'Sparsity', 'Time'] + ['HV', 'Range', 'Sparsity', 'Time'] + ['HV', 'Range', 'Sparsity', 'Time']
