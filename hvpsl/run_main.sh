@@ -5,7 +5,7 @@
 
 for decompose in epo
   do
-  for probname in zdt1 zdt2 vlmop1 vlmop2 RE21 RE24 RE37 lqr2 lqr3
+  for probname in RE24 RE37 lqr2 lqr3
     do
   for seed in 0 1 2 3 4
       do
