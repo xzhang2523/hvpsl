@@ -28,9 +28,9 @@ class MyProblem(Problem):
         # self.n_objectives = 3
         # self.n_variables = 4
         self.problem_name = problem_name
-        self.reproblem = reproblem_dict[problem_name]
-        
+
         if problem_name.startswith('RE'):
+            self.reproblem = reproblem_dict[problem_name]
             n_var = self.reproblem.n_variables
             n_obj = self.reproblem.n_objectives
             lb = self.reproblem.lbound.numpy()
@@ -55,6 +55,8 @@ class MyProblem(Problem):
         out["F"] = re_res.numpy()
         
 
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
@@ -63,16 +65,18 @@ if __name__ == '__main__':
         epilog='Text at the bottom of help')
 
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--problem-name', type=str, default='RE37')
+
     args = parser.parse_args()
 
 
 
 
-    problem_name = 'RE37'
+    # problem_name = 'RE37'
     
     n_obj_dict = {'RE37': 3, 'RE24': 2, 'RE21': 2, 'vlmop2': 2, 'zdt1': 2}
-    n_obj = n_obj_dict[problem_name]
-    problem = MyProblem(problem_name=problem_name)
+    n_obj = n_obj_dict[args.problem_name]
+    problem = MyProblem(problem_name=args.problem_name)
     
     
     
@@ -114,15 +118,12 @@ if __name__ == '__main__':
         plt.ylabel('$f_2$', fontsize=16)
 
 
-
-
-    folder_prefix = os.path.join(os.getcwd(), 'output', problem_name, 'seed_{}'.format(args.seed))
+    folder_prefix = os.path.join(os.getcwd(), 'output', args.problem_name, 'seed_{}'.format(args.seed))
     # folder_prefix =
     os.makedirs(name=folder_prefix, exist_ok=True)
 
 
-
-    fig_name = os.path.join(folder_prefix, '{}.pdf'.format(problem_name))
+    fig_name = os.path.join(folder_prefix, '{}.pdf'.format( 'smsemoa' ))
     plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1)
     print('Figure saved to {}'.format(fig_name))
     

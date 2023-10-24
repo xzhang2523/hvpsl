@@ -3,9 +3,9 @@
 # all_problems 3-obj: RE37 lqr3
 
 
-for decompose in epo
+for decompose in tche ls hv1 hv2
   do
-  for probname in RE24 RE37 lqr2 lqr3
+  for probname in zdt1 zdt2 vlmop1 vlmop2 RE21 RE24 lqr2 RE37 lqr3
     do
   for seed in 0 1 2 3 4
       do
