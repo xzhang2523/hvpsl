@@ -40,9 +40,11 @@ def plot_main(args, model):
             ax = plt.axes(projection='3d')
             ax.view_init(elev=46, azim=33)
             ax.scatter3D(J[:, 0], J[:, 1], J[:, 2], color="green", label='PSL')
-            ax.set_xlabel('$f_1$', fontsize=16)
-            ax.set_ylabel('$f_2$', fontsize=16)
-            ax.set_zlabel('$f_3$', fontsize=16)
+
+            ax.set_xlabel('$f_1$', fontsize=14)
+            ax.set_ylabel('$f_2$', fontsize=14)
+            ax.set_zlabel('$f_3$', fontsize=14)
+
             fig_name = os.path.join(args.folder_prefix, '{}_{}.pdf'.format('psl', args.decompose))
             plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1)
             print('saved in {}'.format(fig_name))

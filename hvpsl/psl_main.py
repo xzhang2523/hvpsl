@@ -144,8 +144,10 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
+
     if args.decompose == 'epo':
         args.n_iter = 100       # epo is slow
+        args.batch_size = 64
 
     problem_name = args.problem_name
 

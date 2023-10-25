@@ -65,13 +65,10 @@ if __name__ == '__main__':
         epilog='Text at the bottom of help')
 
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--n-iter', type=int, default=100)
     parser.add_argument('--problem-name', type=str, default='RE37')
 
     args = parser.parse_args()
-
-
-
-
     # problem_name = 'RE37'
     
     n_obj_dict = {'RE37': 3, 'RE24': 2, 'RE21': 2, 'vlmop2': 2, 'zdt1': 2}
@@ -83,12 +80,11 @@ if __name__ == '__main__':
     pop_size = 40 if n_obj==2 else 100
     algorithm = SMSEMOA(pop_size=pop_size)
     
-    nGeneration = 100
-    
+
     start = time.time()
     res = minimize(problem,
                 algorithm,
-                ('n_gen', nGeneration),
+                ('n_gen', args.n_iter),
                 seed=1,
                 verbose=False)
     
@@ -109,9 +105,9 @@ if __name__ == '__main__':
         ax = plt.axes(projection='3d')
         ax.view_init(elev=46, azim=33)
         ax.scatter3D(res.F[:,0], res.F[:,1], res.F[:,2], color = "green", label='SMS-EMOA')
-        ax.set_xlabel('$f_1$', fontsize=16)
-        ax.set_ylabel('$f_2$', fontsize=16)
-        ax.set_zlabel('$f_3$', fontsize=16)
+        ax.set_xlabel('$f_1$', fontsize=14)
+        ax.set_ylabel('$f_2$', fontsize=14)
+        ax.set_zlabel('$f_3$', fontsize=14)
     else:
         plt.scatter(res.F[:,0], res.F[:,1], color = "gold")
         plt.xlabel('$f_1$', fontsize=16)
@@ -124,7 +120,7 @@ if __name__ == '__main__':
 
 
     fig_name = os.path.join(folder_prefix, '{}.pdf'.format( 'smsemoa' ))
-    plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1)
+    plt.savefig( fig_name, bbox_inches='tight', pad_inches=0.3 )
     print('Figure saved to {}'.format(fig_name))
     
     plt.show()
