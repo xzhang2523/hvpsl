@@ -4,7 +4,7 @@ import nni
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 import sys
 
-sys.path.append(os.path.dirname( os.path.dirname(os.path.abspath(__file__)) ))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # pymoo
 
 # torch
@@ -29,10 +29,6 @@ from solvers import EPOSolver
 # constants or functions
 from moo_data import hv1_sgd_lr_dict, hv2_sgd_lr_dict, mtche_sgd_lr_dict, tche_sgd_lr_dict, epo_sgd_lr_dict, \
     nadir_point_dict, ideal_point_dict
-
-
-
-
 
 
 def psl_loss(J, pref, args, x=None, nadir_ref=None):
@@ -111,11 +107,6 @@ def main_loop(args, nadir_ref):
     return model, loss_array, quality
 
 
-
-
-
-
-
 if __name__ == '__main__':
     # The following codes handle the arguments/parameters
     parser = argparse.ArgumentParser(
@@ -139,13 +130,11 @@ if __name__ == '__main__':
     parser.add_argument('--optimizer-name', type=str, default='SGD')
     parser.add_argument('--use-extreme-pref', type=str, default='N')
     parser.add_argument('--use-nni', type=str, default='N')
-    parser.add_argument('--nadir-eps', type=float, default=0.4 )   #
-
-
+    parser.add_argument('--nadir-eps', type=float, default=0.4)  #
 
     args = parser.parse_args()
     if args.decompose == 'epo':
-        args.n_iter = 100       # epo is slow
+        args.n_iter = 100  # epo is slow
 
     problem_name = args.problem_name
 
@@ -179,12 +168,10 @@ if __name__ == '__main__':
     args.ideal_point = ideal_point_dict[problem_name]
     # args.nadir_point = nadir_point_dict[problem_name]
 
-
     if args.use_nni == 'Y':
         args.nadir_point = nadir_point_dict[problem_name] + nni.get_next_parameter()['nadir_eps']
     else:
         args.nadir_point = nadir_point_dict[problem_name] + args.nadir_eps
-
 
     pref_eps = 0.01
     torch.manual_seed(args.seed)
@@ -192,9 +179,6 @@ if __name__ == '__main__':
     pref_eps_max = 1 - pref_eps
     ts = time.time()
     model, loss_array, quality = main_loop(args=args, nadir_ref=args.nadir_point)
-
-
-
 
     #
     if not args.use_nni == 'Y':
@@ -206,8 +190,9 @@ if __name__ == '__main__':
         plt.ylabel('PSL loss')
 
         fig_name = os.path.join(args.folder_prefix, 'process_{}_{}.pdf'.format('psl', args.decompose))
-        plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1 )
+        plt.savefig(fig_name, bbox_inches='tight', pad_inches=0.1)
         print('saved in {}'.format(fig_name))
         plt.close()
         from hvpsl.plotter import plot_main
+
         plot_main(args, model)
