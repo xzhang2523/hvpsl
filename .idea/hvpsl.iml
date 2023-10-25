@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/lqr2/seed_2" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/lqr2/seed_3" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/lqr2/seed_4" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/lqr3/seed_1" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/lqr3/seed_2" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/lqr3/seed_3" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/lqr3/seed_4" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE24/seed_2" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE24/seed_3" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE24/seed_4" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE37/seed_1" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE37/seed_2" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE37/seed_3" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE37/seed_4" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/RE21" />
+      <excludeFolder url="file://$MODULE_DIR$/hvpsl/output/vlmop2" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
